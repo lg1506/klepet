@@ -15,6 +15,7 @@ function divElementHtmlTekst(sporocilo) {
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = prikaziSliko(sporocilo);
+  sporocilo = prikaziPosnetek(sporocilo);
   sporocilo = dodajSmeske(sporocilo);
   var sistemskoSporocilo;
 
@@ -141,6 +142,19 @@ function dodajSmeske(vhodnoBesedilo) {
 }
 
 function prikaziSliko(vhodnoBesedilo) {
-  vhodnoBesedilo = vhodnoBesedilo.replace("http:", "<img src='http:").replace("https", "<img src='https").replace(".jpg", ".jpg' />").replace(".gif", ".gif' />").replace(".png", ".png' />");
+  if(vhodnoBesedilo.search(/jpg/i) >= 0 || vhodnoBesedilo.search(/gif/i) >= 0 || vhodnoBesedilo.search(/png/i) >= 0) {
+    vhodnoBesedilo = vhodnoBesedilo.replace("http:", "<img src='http:").replace("https", "<img src='https").replace(".jpg", ".jpg' />").replace(".gif", ".gif' />").replace(".png", ".png' />");
+  }
+  return vhodnoBesedilo;
+}
+
+function prikaziPosnetek(vhodnoBesedilo) {
+  if(vhodnoBesedilo.search(/youtube/i) >= 0) { 
+    var n = vhodnoBesedilo.search(/https:/i);
+    var youtube = vhodnoBesedilo.substr(n, (n + 43));
+    var zacetek = youtube.search(/=/i) + 1;
+    var videoID = youtube.substr(zacetek, (zacetek + 10));
+    vhodnoBesedilo = vhodnoBesedilo.replace("https://www.youtube.com/watch?v=", "<iframe src=\"https://www.youtube.com/embed/").replace(videoID, videoID + "\" allowfullscreen></iframe>");
+  }
   return vhodnoBesedilo;
 }
